@@ -1,40 +1,45 @@
+import { applyMiddleware, createStore } from 'redux'
+import thunk from 'redux-thunk'
+import { rootReducer } from './redux/rootReducer'
 import './styles.css'
+import { asyncIncrement, decrement, increment } from './redux/actions'
 
 
-//!Pure javascript:________________________________________native code
+
 const counter = document.getElementById('counter')
 const addBtn = document.getElementById('add')
 const subBtn = document.getElementById('sub')
 const asyncBtn = document.getElementById('async')
 const themeBtn = document.getElementById('theme')
 
-let state = 0;
+const store = createStore(
+   rootReducer,
+   0,
+   applyMiddleware(thunk)
+)
 
-function render() {
-   counter.textContent = state.toString()
-}
 addBtn.addEventListener('click', () => {
-   state++
-   render()
+   store.dispatch(increment())
 })
+
 subBtn.addEventListener('click', () => {
-   state--
-   render()
+   store.dispatch(decrement())
+   debugger;
 })
 
 asyncBtn.addEventListener('click', () => {
-   setTimeout(() => {
-      state++
-      render()
-   }, 3000)
-   state--
-   render()
+   store.dispatch(asyncIncrement())
+})
+
+store.subscribe(() => {
+   const state = store.getState()
+   counter.textContent = state
+
+
 })
 
 themeBtn.addEventListener('click', () => {
-   document.body.classList.toggle('dark')
+
 })
 
 render()
-
-//!this is the end of pure JavaScripts------------------
